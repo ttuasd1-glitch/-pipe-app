@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>m계산</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="top-row">
+        <button id="calendarOpenBtn" class="calendar-icon-btn" aria-label="달력 열기">📅</button>
+        <div class="top-title">
+          <h1>m계산</h1>
+          <p id="selectedDateLabel">날짜 미선택</p>
+        </div>
+        <button class="menu-btn">⋮</button>
+      </div>
+
+      <nav class="tabbar">
+        <button class="tab active">열선m계산</button>
+      </nav>
+    </header>
+
+    <main>
+      <div id="pageSlider" class="page-slider"></div>
+      <div id="pageDots" class="page-dots"></div>
+    </main>
+  </div>
+
+  <div id="calendarModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="calendar-popup">
+      <button id="calendarXBtn" class="calendar-x-btn" aria-label="달력 닫기">×</button>
+      <div class="calendar-top">
+        <button id="prevMonth" class="month-nav-btn">‹</button>
+        <div class="calendar-title-wrap">
+          <div class="calendar-year" id="calendarYear"></div>
+          <div class="calendar-month" id="monthLabel"></div>
+        </div>
+        <button id="nextMonth" class="month-nav-btn">›</button>
+      </div>
+      <div class="week-row">
+        <span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+      </div>
+      <div id="calendarGrid" class="calendar-grid"></div>
+      <button id="calendarCloseBtn" class="close-btn">닫기</button>
+    </div>
+  </div>
+
+  <div id="typeModal" class="modal hidden">
+    <div class="type-backdrop"></div>
+    <div class="type-popup">
+      <h2>페이지 유형 선택</h2>
+      <button id="basementTypeBtn" class="type-btn">지하주차장</button>
+      <button id="typeCancelBtn" class="close-btn">취소</button>
+    </div>
+  </div>
+
+  <template id="recordPageTemplate">
+    <section class="slide-page record-page">
+      <div class="garage-page-card">
+        <div class="page-card-head garage-head">
+          <strong class="page-type">지하주차장</strong>
+          <span class="page-count"></span>
+        </div>
+        <div class="garage-bundles"></div>
+      </div>
+    </section>
+  </template>
+
+  <template id="plusPageTemplate">
+    <section class="slide-page plus-page">
+      <button class="plus-page-btn">
+        <span>＋</span>
+        <strong>페이지 추가</strong>
+        <em>눌러서 유형을 선택하세요</em>
+      </button>
+    </section>
+  </template>
+
+  <template id="garageBundleTemplate">
+    <div class="garage-bundle">
+      <div class="garage-top-grid">
+        <label class="field field-floor-kind">
+          <span>구분</span>
+          <select class="floor-kind">
+            <option>지하</option>
+            <option>지상</option>
+          </select>
+        </label>
+        <label class="field field-floor">
+          <span>층수</span>
+          <div class="unit-input">
+            <input class="floor-number" type="number" inputmode="numeric" placeholder="숫자" />
+            <b>층</b>
+          </div>
+        </label>
+        <label class="field field-zone">
+          <span>구역</span>
+          <input class="zone-input" type="text" placeholder="구역 입력" />
+        </label>
+        <div class="bundle-actions">
+          <button class="soft-icon-btn bundle-plus-btn" aria-label="구역 묶음 추가">＋</button>
+          <button class="soft-icon-btn danger bundle-delete-btn" aria-label="구역 삭제">−</button>
+        </div>
+      </div>
+      <div class="pipe-groups"></div>
+    </div>
+  </template>
+
+  <template id="pipeGroupTemplate">
+    <div class="pipe-group">
+      <div class="pipe-meta-grid">
+        <label class="field field-pipe">
+          <span>배관</span>
+          <select class="pipe-type">
+            <option>소화</option>
+            <option>위생</option>
+            <option>급수</option>
+            <option>오배수</option>
+            <option>조경</option>
+          </select>
+        </label>
+        <label class="field field-panel">
+          <span>판넬번호</span>
+          <div class="unit-input panel-unit">
+            <input class="panel-number" type="number" inputmode="numeric" placeholder="숫자" />
+            <b>번 판넬</b>
+          </div>
+        </label>
+        <div class="pipe-actions">
+          <button class="soft-icon-btn pipe-plus-btn" aria-label="배관 묶음 추가">＋</button>
+          <button class="soft-icon-btn danger pipe-delete-btn" aria-label="배관 삭제">−</button>
+        </div>
+      </div>
+      <div class="pk-rows"></div>
+      <button class="add-pk-btn">+ 추가</button>
+    </div>
+  </template>
+
+  <template id="pkRowTemplate">
+    <div class="pk-row">
+      <label class="field">
+        <span>PK번호</span>
+        <div class="unit-input pk-unit">
+          <b>PK</b>
+          <input class="pk-number" type="number" inputmode="numeric" placeholder="0" />
+        </div>
+      </label>
+      <label class="field">
+        <span>시작</span>
+        <div class="unit-input">
+          <input class="start-value meter-input" type="number" inputmode="decimal" placeholder="0" />
+          <b>m</b>
+        </div>
+      </label>
+      <label class="field">
+        <span>끝</span>
+        <div class="unit-input">
+          <input class="end-value meter-input" type="number" inputmode="decimal" placeholder="0" />
+          <b>m</b>
+        </div>
+      </label>
+      <label class="field">
+        <span>총</span>
+        <div class="unit-input total-unit">
+          <input class="total-value" readonly placeholder="0" />
+          <b>m</b>
+        </div>
+      </label>
+
+      <button class="pk-delete-btn" aria-label="PK 라인 삭제">−</button>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

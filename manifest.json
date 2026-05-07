@@ -1,0 +1,9 @@
+{
+  "name": "m계산",
+  "short_name": "m계산",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#081120",
+  "icons": []
+}
